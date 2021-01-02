@@ -32,6 +32,8 @@ public class FileUploadController {
     }
 
     /*
+    Look up the current list of uploaded files from the StorageService and loads it into a Thymeleaf template.
+    It calculates a link to the actual resource by using MvcUriComponentsBuilder
     * */
     @GetMapping("/")
     public String listUploadedFiles(Model model) throws IOException {
@@ -43,4 +45,37 @@ public class FileUploadController {
 
         return "uploadForm";
     }
+
+    /*
+    * Loads the resource (if it exists) and sends it to the browser to download by using a Content-Disposition
+    * response header
+    * */
+    @GetMapping("files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+
+        Resource file = storageService.loadAsResource(filename);
+        return
+                ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                        "Attachment; filename=\"" + file.getFilename()+ "\"").body(file);
+    }
+
+    /*
+    * Hanldes a multi-part message file and gives it to the StorageService for saving.
+    * */
+    @PostMapping("/")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   RedirectAttributes redirectAttributes) {
+        storageService.store(file);
+        redirectAttributes.addFlashAttribute("message", "You successfully uploaded that you nedded " +
+                file.getOriginalFilename() + "!");
+
+        return "redirect:/";
+    }
+
+    @ExceptionHandler(StorageFileNotFoundException.class)
+    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+        return ResponseEntity.notFound().build();
+    }
+
 }

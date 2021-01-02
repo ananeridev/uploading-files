@@ -1,6 +1,6 @@
 package com.example.uploadingfiles.storage;
 
-public class StorageFileNotFoundException {
+public class StorageFileNotFoundException extends StorageException {
 
     public StorageFileNotFoundException(String message) {
         super(message);
