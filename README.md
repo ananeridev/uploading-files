@@ -4,4 +4,4 @@
 - Java
 - SpringBoot
 - Thymeleaf
-- Spting Data
+- Spring Data
