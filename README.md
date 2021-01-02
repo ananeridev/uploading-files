@@ -1,2 +1,7 @@
-# Backend System for upload files
+## Backend System for uploading files
 
+### Technologies:
+- Java
+- SpringBoot
+- Thymeleaf
+- Spting Data
